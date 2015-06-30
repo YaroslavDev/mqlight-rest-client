@@ -9,27 +9,38 @@ var opts = {
 	user: 'admin',
 	password: 'password'
 };
-app.post('/event', function(req, res) {
+app.post('/events', function(req, res) {
 	function respond(data, delivery) {
 		res.send(data);
-		failedClient.unsubscribe(failedTopic);
-		succeededClient.unsubscribe(succeededTopic);
+		clients.forEach(function(client) {
+			client.stop();
+		});
 	}
 	res.set('Content-Type', 'application/json');
 	var outTopic = req.headers.out;
-	var succeededTopic = req.headers.succeeded;
-	var failedTopic = req.headers.failed;
+	if (outTopic == undefined) {
+		var body = {status: "Error: Specify out topic"};
+		res.send(body);
+		return;
+	}
+	var replyTopics = [];
+	var succeeded = req.headers.succeeded;
+	if (succeeded != undefined) replyTopics.append(succeeded);
+	var failed = req.headers.failed;
+	if (failed != undefined) replyTopics.append(failed);
 	var body = JSON.stringify(req.body);
 
-	//opts["id"] = "failedClient";
-	var failedClient = mqlight.createClient(opts);
-	failedClient.subscribe(failedTopic);
-	failedClient.on('message', respond);
-
-	//opts["id"] = "succeededClient";
-	var succeededClient = mqlight.createClient(opts);
-	succeededClient.subscribe(succeededTopic);
-	succeededClient.on('message', respond);
+	if (replyTopics.length == 0) {
+		var body = {status: "Success: OK"};
+		res.send(body);
+	} else {
+		var clients = replyTopics.map(function(topic) {
+			var client = mqlight.createClient(opts);
+			client.subscribe(topic);
+			client.on('message', respond);
+			return client;
+		});
+	}
 
 	succeededClient.send(outTopic, body);
 });

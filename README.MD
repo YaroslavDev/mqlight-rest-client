@@ -17,6 +17,7 @@ node mqlight-client.js
 ## User guide
 
 Send a HTTP POST request to localhost:3000/event with following headers:
-out: Topic to which you would like to publish message.
-succeeded: Topic to which sucessful response should be sent.
-failed: OPTIONAL. Topic to which failed response should be sent.
+
+* __out__: Topic to which you would like to publish message.
+* __succeeded__: Topic to which sucessful response should be sent.
+* __failed__: OPTIONAL. Topic to which failed response should be sent.
