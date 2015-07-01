@@ -4,65 +4,32 @@ var app = express();
 var bodyParser = require('body-parser');
 app.use(bodyParser.json());
 
-var mqlight = require('mqlight');
-var opts = {
-	service: 'amqp://localhost',
-	user: 'admin',
-	password: 'password'
-};
+var mqlight = require('./messaging');
 
-app.post('/events/:topic', function(req, res) {
+app.post('/events', function(req, res) {
 	res.set('Content-Type', 'application/json');
-	var replyTopics = [];
-	addReplyTopic(replyTopics, req.headers.succeeded);
-	addReplyTopic(replyTopics, req.headers.failed);
 
-	if (replyTopics.length == 0) {
-		res.send({status: "Success: OK"});
-	} else {
+	var body = JSON.stringify(req.body);
+	var topic = req.headers.topic;
+	var response = mqlight.sendMessage(topic, body);
+
+	var replyTopics = [];
+	mqlight.addReplyTopic(replyTopics, req.headers.succeeded);
+	mqlight.addReplyTopic(replyTopics, req.headers.failed);
+
+	if (replyTopics.length != 0) {
 		var clients = [];
 		var callback = function(data, delivery) {
 			res.send(data);
-			stopClients(clients);
+			mqlight.stopClients(clients);
 		}
 		replyTopics.forEach(function(topic) {
-			var client = listen(topic, callback)
+			var client = mqlight.listen(topic, callback)
 			clients.push(client);
 		});
+	} else {
+		res.send(response);
 	}
-
-	var body = JSON.stringify(req.body);
-	var topic = req.params.topic;
-	sendMessage(topic, body);
 });
 
 var server = app.listen(3000, function() {});
-
-function addReplyTopic(replyTopics, topic) {
-	if (topic != undefined) replyTopics.push(topic);
-}
-
-function sendMessage(topic, body) {
-	var client = mqlight.createClient(opts);
-	client.send(topic, body);
-	console.log("Sending " + body + " to topic " + topic);
-	console.log("Client stopping after sending message " + client);
-	client.stop();
-}
-
-function listen(topic, callback) {
-	var client = mqlight.createClient(opts);
-	client.subscribe(topic);
-	console.log("Listening to " + topic);
-	client.on('message', callback);
-	return client;
-}
-
-function stopClients(clients) {
-	clients.forEach(function(client) {
-		if (client != undefined) {
-			console.log("Client stopping after reply " + client);
-			client.stop();
-		}
-	});
-}
