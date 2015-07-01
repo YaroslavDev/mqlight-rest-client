@@ -21,6 +21,10 @@ app.post('/events', function(req, res) {
 	if (replyTopics.length != 0) {
 		var clients = [];
 		var callback = function(data, delivery) {
+			var props = delivery.message.properties;
+			for (attr in props) {
+				res.set(attr, props[attr]);
+			};
 			res.send(data);
 			mqlight.stopClients(clients);
 		}
