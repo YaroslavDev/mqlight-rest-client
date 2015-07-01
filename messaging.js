@@ -8,12 +8,13 @@ var opts = {
 var counter = 0;
 
 module.exports = {
-	sendMessage: function(topic, body) {
+	sendMessage: function(topic, body, attrs) {
 		if (topic != undefined) {
 			opts.id = "client" + counter;
 			counter += 1;
+			var options = {properties: attrs};
 			var client = mqlight.createClient(opts);
-			client.send(topic, body);
+			client.send(topic, body, options);
 			console.log("Sending " + body + " to topic " + topic);
 			console.log("Client stopping after sending message " + client);
 			client.stop();
@@ -41,5 +42,15 @@ module.exports = {
 	},
 	addReplyTopic: function(replyTopics, topic) {
 		if (topic != undefined) replyTopics.push(topic);
+	},
+	readAttributes: function(headers) {
+		var attrs = {};
+		if (headers.provider != undefined) {
+			attrs.provider = headers.provider;
+		}
+		if (headers["x-vcap-request-id"] != undefined) {
+			attrs["x-vcap-request-id"] = headers["x-vcap-request-id"];
+		}
+		return attrs;
 	}
 };

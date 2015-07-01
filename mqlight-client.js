@@ -11,7 +11,8 @@ app.post('/events', function(req, res) {
 
 	var body = JSON.stringify(req.body);
 	var topic = req.headers.topic;
-	var response = mqlight.sendMessage(topic, body);
+	var attrs = mqlight.readAttributes(req.headers);
+	var response = mqlight.sendMessage(topic, body, attrs);
 
 	var replyTopics = [];
 	mqlight.addReplyTopic(replyTopics, req.headers.succeeded);

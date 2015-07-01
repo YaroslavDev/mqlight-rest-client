@@ -21,3 +21,5 @@ Send a HTTP POST request to localhost:3000/events with following headers:
 * __topic__: Topic to which you would like to publish message.
 * __succeeded__: OPTIONAL. Topic to which sucessful response should be sent. If not set, responds immediately with {status: "OK"}. Otherwise, responds with message body received from this topic.
 * __failed__: OPTIONAL. Topic to which failed response should be sent.
+* __x-vcap-request-id__: OPTIONAL.
+* __provider__: OPTIONAL.
