@@ -11,13 +11,8 @@ var opts = {
 	password: 'password'
 };
 
-app.post('/events', function(req, res) {
+app.post('/events/:topic', function(req, res) {
 	res.set('Content-Type', 'application/json');
-	var outTopic = req.headers.out;
-	if (outTopic == undefined) {
-		res.send({status: "Error: Specify out topic"});
-		return;
-	}
 	var replyTopics = [];
 	addReplyTopic(replyTopics, req.headers.succeeded);
 	addReplyTopic(replyTopics, req.headers.failed);
@@ -37,7 +32,8 @@ app.post('/events', function(req, res) {
 	}
 
 	var body = JSON.stringify(req.body);
-	sendMessage(outTopic, body);
+	var topic = req.params.topic;
+	sendMessage(topic, body);
 });
 
 var server = app.listen(3000, function() {});

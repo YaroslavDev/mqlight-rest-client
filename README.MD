@@ -5,9 +5,9 @@
 * Install [node.js](https://nodejs.org/download/)
 * Install 3rd party dependencies: 
 ```python
-npm install express
-npm install body-parser
-npm install mqlight
+npm install express   
+npm install body-parser   
+npm install mqlight  
 ```
 * Run mqlight client:
 ```python
