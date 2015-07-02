@@ -65,16 +65,13 @@ It is possible to mock service with some default behavior defined by set of rule
 	"rules": [
 		{
 			"recv": {
-				"createPlanInfo": {"name": "Barbarosa plan"}
+				"message": "How are you?"
 			},
-			"on": "e/packaging/v1/apis/fetch/integration-started/+/apim",
+			"on": "chat/programmers/questions",
 			"send": {
-				"plan": {
-					"name": "Barbarosa",
-					"comment": "Ciotki plan"
-				}
+				"message": "I am fine"
 			},
-			"to": "e/packaging/v1/apis/fetch/integration-succeeded"
+			"to": "chat/programmers/answers"
 		}
 	]
 }
