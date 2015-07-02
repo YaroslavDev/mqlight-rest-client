@@ -27,7 +27,7 @@ Send a HTTP POST request to localhost:3000/events with following query params:
 Request example:
 
 ```python
-> POST localhost:3000/events?topic=news/technology&succeeded=news/technology/responses&failed=e/packaging/v1/apis/fetch/integration-failed/#
+> POST localhost:3000/events?topic=news/technology&succeeded=news/technology/responses&failed=news/technology/failures
 > Headers:
 > Content-Type: application/json
 > Body:
