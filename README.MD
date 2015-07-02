@@ -30,9 +30,9 @@ Request example:
 > POST localhost:3000/events?topic=news/technology&succeeded=news/technology/responses&failed=news/technology/failures
 > Headers:
 > Content-Type: application/json
-> Body:
 ```
 ```json
+Body:
 { 
 	"message": "iPhone 6S release data" 
 }
