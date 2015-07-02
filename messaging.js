@@ -45,11 +45,8 @@ module.exports = {
 	},
 	readAttributes: function(headers) {
 		var attrs = {};
-		if (headers.provider != undefined) {
-			attrs.provider = headers.provider;
-		}
-		if (headers["x-vcap-request-id"] != undefined) {
-			attrs["x-vcap-request-id"] = headers["x-vcap-request-id"];
+		for (var header in headers) {
+			attrs[header] = headers[header];
 		}
 		return attrs;
 	}

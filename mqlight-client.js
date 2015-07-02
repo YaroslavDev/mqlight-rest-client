@@ -10,13 +10,14 @@ app.post('/events', function(req, res) {
 	res.set('Content-Type', 'application/json');
 
 	var body = JSON.stringify(req.body);
-	var topic = req.headers.topic;
+	var topic = req.query.topic;
+	console.log("SENDING" + topic);
 	var attrs = mqlight.readAttributes(req.headers);
 	var response = mqlight.sendMessage(topic, body, attrs);
 
 	var replyTopics = [];
-	mqlight.addReplyTopic(replyTopics, req.headers.succeeded);
-	mqlight.addReplyTopic(replyTopics, req.headers.failed);
+	mqlight.addReplyTopic(replyTopics, req.query.succeeded);
+	mqlight.addReplyTopic(replyTopics, req.query.failed);
 
 	if (replyTopics.length != 0) {
 		var clients = [];
