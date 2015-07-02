@@ -31,5 +31,20 @@ Request example:
 > Headers:
 > Content-Type: application/json
 > Body:
-> { "message": "iPhone 6S release data" }
 ```
+```json
+{ 
+	"message": "iPhone 6S release data" 
+}
+```
+
+This will publish a message with JSON contained in request body on topic _news/technology_ and subscribe to 2 topics: _news/technology/responses_ and _news/technology/failures_. First message that arrives on any of these 2 topics will be returned to user, and server will unsunscribe from both __succeeded__ and __failed__ topics.
+
+If you specify only sending topic, then client will publish a message and respond immediately with:
+```json
+{
+	"Success": "OK"
+}
+```
+
+It is possible to specify only __succeeded__ or/and __failed__. Then client will not publish any messages, and will start listening to specified topics. First response arrived to any of this topics, will be sent to user.
