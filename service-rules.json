@@ -1,0 +1,14 @@
+{
+	"rules": [
+		{
+			"recv": {
+				"message": "How are you?"
+			},
+			"on": "chat/programmers/questions",
+			"send": {
+				"message": "I am fine"
+			},
+			"to": "chat/programmers/answers"
+		}
+	]
+}
