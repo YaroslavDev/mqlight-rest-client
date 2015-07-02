@@ -8,13 +8,15 @@
 npm install express   
 npm install body-parser   
 npm install mqlight  
+npm install underscore
 ```
+* Indicate host, username and password to mqlight in _messaging.js_. Defaults are amqp://localhost, admin, password.
 * Run mqlight client:
 ```python
 node mqlight-client.js
 ```
 
-## User guide
+## Message Producer user guide
 
 Send a HTTP POST request to localhost:3000/events with following query params:
 
@@ -23,6 +25,11 @@ Send a HTTP POST request to localhost:3000/events with following query params:
 * __failed__: OPTIONAL. Topic to which failed response should be sent;
 * All headers will be converted to AMQP message attributes;
 * When sending JSON in body specify header __Content-Type: application/json__.
+
+You can specify following headers:
+
+* __x-vcap-request-id__: OPTIONAL. If specified, this request id will be appended to response topic of mocked service separated with '/'.
+* __provider__: OPTIONAL. If specified, this will be appended to response topic of mocked service separated with '/'.
 
 Request example:
 
@@ -48,3 +55,34 @@ If you specify only sending topic, then client will publish a message and respon
 ```
 
 It is possible to specify only __succeeded__ or/and __failed__. Then client will not publish any messages, and will start listening to specified topics. First response arrived to any of this topics, will be sent to user.
+
+## Message Consumer user guide
+
+It is possible to mock service with some default behavior defined by set of rules. Below is sample of JSON containing such rules.
+
+```json
+{
+	"rules": [
+		{
+			"recv": {
+				"createPlanInfo": {"name": "Barbarosa plan"}
+			},
+			"on": "e/packaging/v1/apis/fetch/integration-started/+/apim",
+			"send": {
+				"plan": {
+					"name": "Barbarosa",
+					"comment": "Ciotki plan"
+				}
+			},
+			"to": "e/packaging/v1/apis/fetch/integration-succeeded"
+		}
+	]
+}
+```
+
+This should be understood as follows: When a message containing __recv__ is received on topic __on__, send message containing __send__ to topic __to__.
+
+Default rules file is service-rules.json, but you can override it with command line parameter like:
+```python
+node mqlight-client.js <rule-file>
+```

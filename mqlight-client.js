@@ -6,12 +6,17 @@ app.use(bodyParser.json());
 
 var mqlight = require('./messaging');
 
+var mocker = require('./mocker');
+console.log(process.argv);
+var ruleFile = process.argv[2];
+ruleFile = ruleFile || 'service-rules.json';
+mocker.mockServiceFromFile(ruleFile);
+
 app.post('/events', function(req, res) {
 	res.set('Content-Type', 'application/json');
 
 	var body = JSON.stringify(req.body);
 	var topic = req.query.topic;
-	console.log("SENDING" + topic);
 	var attrs = mqlight.readAttributes(req.headers);
 	var response = mqlight.sendMessage(topic, body, attrs);
 
