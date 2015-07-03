@@ -13,9 +13,11 @@ module.exports = {
 				var callback = function(data, delivery) {
 					var msg = JSON.parse(data);
 					var attrs = delivery.message.properties;
+					console.log("MOCKER: Received msg " + JSON.stringify(msg));
+					console.log("MOCKER: Received msg with attrs " + JSON.stringify(delivery));
 					if (underscore.isEqual(msg, rule.recv)) {
 						var sendTopic = rule.to;
-						sendTopic = appendAttribute(sendTopic, attrs, "x-vcap-request-id");
+						sendTopic = appendAttribute(sendTopic, attrs, "reply-id");//x-vcap-request-id or reply-id
 						sendTopic = appendAttribute(sendTopic, attrs, "provider");
 						var sendAttrs = mqlight.readAttributes(attrs);
 						var body = JSON.stringify(rule.send);
@@ -23,7 +25,7 @@ module.exports = {
 					} else {
 						console.log(data);
 						console.log(rule.recv);
-						console.log("OBJECT NOT EQUAL!");
+						console.log("MOCKER: Question and answer are not equal!");
 					}
 				};
 				mqlight.listen(rule.on, callback);

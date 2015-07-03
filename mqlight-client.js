@@ -8,8 +8,9 @@ var mqlight = require('./messaging');
 
 var mocker = require('./mocker');
 var ruleFile = process.argv[2];
-ruleFile = ruleFile || 'service-rules.json';
-mocker.mockServiceFromFile(ruleFile);
+if (ruleFile != undefined) {
+	mocker.mockServiceFromFile(ruleFile);
+}
 
 app.post('/events', function(req, res) {
 	res.set('Content-Type', 'application/json');

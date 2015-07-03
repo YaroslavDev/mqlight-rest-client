@@ -26,7 +26,7 @@ Send a HTTP POST request to localhost:3000/events with following query params:
 
 You can specify following headers:
 
-* __x-vcap-request-id__: OPTIONAL. If specified, this request id will be appended to response topic of mocked service separated with '/'.
+* __reply-id__: OPTIONAL. If specified, this request id will be appended to response topic of mocked service separated with '/'.
 * __provider__: OPTIONAL. If specified, this will be appended to response topic of mocked service separated with '/'.
 * When sending JSON in body specify header __Content-Type: application/json__.
 * All headers will be converted to AMQP message attributes.
@@ -77,7 +77,7 @@ It is possible to mock service with some default behavior defined by set of rule
 
 This should be understood as follows: When a message containing __recv__ is received on topic __on__, send message containing __send__ to topic __to__.
 
-Default rules file is service-rules.json, but you can override it with command line parameter like:
+In order to turn on message consumer indicate rule file as command line parameter:
 ```python
 node mqlight-client.js <rule-file>
 ```
