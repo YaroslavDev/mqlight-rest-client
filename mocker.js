@@ -18,7 +18,8 @@ module.exports = {
 						sendTopic = appendAttribute(sendTopic, attrs, "x-vcap-request-id");
 						sendTopic = appendAttribute(sendTopic, attrs, "provider");
 						var sendAttrs = mqlight.readAttributes(attrs);
-						mqlight.sendMessage(sendTopic, rule.send, sendAttrs);
+						var body = JSON.stringify(rule.send);
+						mqlight.sendMessage(sendTopic, body, sendAttrs);
 					} else {
 						console.log(data);
 						console.log(rule.recv);
