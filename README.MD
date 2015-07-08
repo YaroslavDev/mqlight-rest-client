@@ -3,7 +3,7 @@
 ## Installation
 
 * Install [node.js](https://nodejs.org/download/)
-* Install 3rd party dependencies: 
+* Clone project, go to project directory and install 3rd party dependencies by running: 
 ```python
 npm install express   
 npm install body-parser   
@@ -11,7 +11,7 @@ npm install mqlight
 npm install underscore
 ```
 * Indicate host, username and password to mqlight in _messaging.js_. Defaults are amqp://localhost, admin, password.
-* Run mqlight client:
+* Having MQ Light turned on, run mqlight client:
 ```python
 node mqlight-client.js
 ```
