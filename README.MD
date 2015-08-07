@@ -87,7 +87,7 @@ Application is ready to be deployed on Bluemix. Go to project directory and run:
 cf push
 ```
 
-This will read _manifest.yml_ that contains information necessary for deployment on Bluemix. For more details have a look at [documentation](https://www.ng.bluemix.net/docs/#starters/nodejs/index.html#nodejs).
+This will read _manifest.yml_ that contains information necessary for deployment on Bluemix. For more details have a look at [documentation](https://www.ng.bluemix.net/docs/#starters/nodejs/index.html#nodejs). Feel free to play with space and memory since application does not require a lot of resources.
 
 ```lang
 ---
