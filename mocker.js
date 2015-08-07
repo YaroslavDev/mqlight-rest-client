@@ -14,12 +14,14 @@ module.exports = {
 		return mockServiceFromJSON(mockRules);
 	},
 	mockServiceFromJSON: function(mockRules) {
+		console.log("MockRules is " + mockRules);
+		console.log("Mocking service according to rules: " + JSON.stringify(mockRules, null, 4));
 		return mockRules.rules.map(function(rule) {
 			var callback = function(data, delivery) {
 				var msg = JSON.parse(data);
 				var attrs = delivery.message.properties;
-				console.log("MOCKER: Received msg " + JSON.stringify(msg));
-				console.log("MOCKER: Received msg with attrs " + JSON.stringify(delivery));
+				console.log("MOCKER: Received msg " + JSON.stringify(msg, null, 4));
+				console.log("MOCKER: Received msg with attrs " + JSON.stringify(delivery, null, 4));
 				if (underscore.isEqual(msg, rule.recv)) {
 					var sendTopic = rule.to;
 					sendTopic = appendAttribute(sendTopic, attrs, "reply-id");//x-vcap-request-id or reply-id
