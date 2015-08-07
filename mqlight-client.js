@@ -10,9 +10,10 @@ app.use(bodyParser.json());
 var mqlight = require('./messaging');
 
 var mocker = require('./mocker');
+var mockerClients = [];
 var ruleFile = process.argv[2];
 if (ruleFile != undefined) {
-	mocker.mockServiceFromFile(ruleFile);
+	mockerClients = mocker.mockServiceFromFile(ruleFile);
 }
 
 app.post('/events', function(req, res) {
@@ -44,6 +45,13 @@ app.post('/events', function(req, res) {
 	} else {
 		res.send(response);
 	}
+});
+
+app.post('/mock', function(req, res) {
+	res.set('Content-Type', 'application/json');
+	mqlight.stopClients(mockerClients);
+	mockerClients = mocker.mockServiceFromJSON(req.body);
+	res.send({status: "Success: OK"});
 });
 
 /*

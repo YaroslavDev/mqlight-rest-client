@@ -79,6 +79,29 @@ In order to turn on message consumer indicate rule file as command line paramete
 node mqlight-client.js <rule-file>
 ```
 
+Or you can send a POST request that updates mocker rules without restarting the application:
+
+```python
+> POST localhost:3000/mock
+> Headers:
+> Content-Type: application/json
+> Body:
+> {
+>	"rules": [
+>		{
+>			"recv": {
+>				"message": "How are you?"
+>			},
+>			"on": "chat/programmers/questions",
+>			"send": {
+>				"message": "I am fine"
+>			},
+>			"to": "chat/programmers/answers"
+>		}
+>	]
+> }
+```
+
 ## Deploy on Bluemix
 
 Application is ready to be deployed on Bluemix. Go to project directory and run:
