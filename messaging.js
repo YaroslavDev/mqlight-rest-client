@@ -36,7 +36,7 @@ module.exports = {
 			var client = mqlight.createClient(opts);
 			client.send(topic, body, options);
 			console.log("Sending " + body + " to topic " + topic);
-			console.log("Client stopping after sending message " + client);
+			console.log("Client is being stopped after sending message " + body);
 			client.stop();
 			return {status: "Success: OK"};
 		} else {
@@ -55,7 +55,7 @@ module.exports = {
 	stopClients: function(clients) {
 		clients.forEach(function(client) {
 			if (client != undefined) {
-				console.log("Client stopping after reply " + client);
+				console.log("Client is being stopped");
 				client.stop();
 			}
 		});
