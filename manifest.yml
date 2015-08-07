@@ -1,7 +1,7 @@
 ---
 applications:
 - name: mqlight-rest-client
-  disk_quota: 1024M
+  disk_quota: 256M
   host: mqlight-rest-client
   path: .
   command: node mqlight-client.js
