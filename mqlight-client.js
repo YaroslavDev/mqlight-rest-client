@@ -1,4 +1,7 @@
+var http = require('http');
 var express = require('express');
+var httpOpts = {};
+httpOpts.port = (process.env.VCAP_APP_PORT || 3000);
 var app = express();
 
 var bodyParser = require('body-parser');
@@ -43,4 +46,16 @@ app.post('/events', function(req, res) {
 	}
 });
 
-var server = app.listen(3000, function() {});
+/*
+ * Start REST server
+ */
+if (httpOpts.host) {
+  http.createServer(app).listen(httpOpts.host, httpOpts.port, function () {
+    console.log('App listening on ' + httpOpts.host + ':' + httpOpts.port);
+  });
+}
+else {
+  http.createServer(app).listen(httpOpts.port, function () {
+    console.log('App listening on *:' + httpOpts.port);
+  });
+}

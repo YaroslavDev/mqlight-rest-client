@@ -1,0 +1,26 @@
+{
+	"name": "mqlight-rest-client",
+	"version": "1.0.0",
+	"description": "A simple nodejs app that converts HTTP requests to MQLight messages",
+	"dependencies": {
+		"express": ">=4.13.3",
+		"body-parser": ">=1.13.3",
+		"mqlight": ">=1.0.2015061000",
+		"underscore": ">=1.8.3"
+	},
+	"engines": {
+		"node": "~0.12.x"
+	},
+	"scripts": {
+		"start": "node mqlight-client.js"
+	},
+	"keywords": [
+		"mqlight",
+		"mqlight-client"
+	],
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/YaroslavDev/mqlight-rest-client"
+	},
+	"license": "MIT"
+}

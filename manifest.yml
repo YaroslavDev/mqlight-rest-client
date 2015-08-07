@@ -1,0 +1,11 @@
+---
+applications:
+- name: mqlight-rest-client
+  disk_quota: 1024M
+  host: mqlight-rest-client
+  path: .
+  command: node mqlight-client.js
+  instances: 1
+  memory: 256M
+  services:
+  - mqlight

@@ -5,10 +5,7 @@
 * Install [node.js](https://nodejs.org/download/)
 * Clone project, go to project directory and install 3rd party dependencies by running: 
 ```python
-npm install express   
-npm install body-parser   
-npm install mqlight  
-npm install underscore
+npm install
 ```
 * Indicate host, username and password to mqlight in _messaging.js_. Defaults are amqp://localhost, admin, password.
 * Having MQ Light turned on, run mqlight client:
@@ -80,4 +77,29 @@ This should be understood as follows: When a message containing __recv__ is rece
 In order to turn on message consumer indicate rule file as command line parameter:
 ```python
 node mqlight-client.js <rule-file>
+```
+
+## Deploy on Bluemix
+
+Application is ready to be deployed on Bluemix. Go to project directory and run:
+
+```python
+cf push
+```
+
+This will read _manifest.yml_ that contains information necessary for deployment on Bluemix. For more details have a look at [documentation](https://www.ng.bluemix.net/docs/#starters/nodejs/index.html#nodejs).
+
+```lang
+---
+applications:
+- name: mqlight-rest-client
+  disk_quota: 1024M
+  host: mqlight-rest-client
+  path: .
+  command: node mqlight-client.js
+  instances: 1
+  memory: 256M
+  services:
+  - mqlight
+
 ```
