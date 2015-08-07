@@ -36,7 +36,7 @@ module.exports = {
 			var client = mqlight.createClient(opts);
 			client.send(topic, body, options);
 			console.log("Sending " + body + " to topic " + topic);
-			console.log("Client is being stopped after sending message " + body);
+			console.log("Client " +  client.id + " is being stopped after sending message " + body);
 			client.stop();
 			return {status: "Success: OK"};
 		} else {
@@ -48,14 +48,14 @@ module.exports = {
 		counter += 1;
 		var client = mqlight.createClient(opts);
 		client.subscribe(topic);
-		console.log("Listening to " + topic);
+		console.log("Client " + client.id + " is listening to " + topic);
 		client.on('message', callback);
 		return client;
 	},
 	stopClients: function(clients) {
 		clients.forEach(function(client) {
 			if (client != undefined) {
-				console.log("Client is being stopped");
+				console.log("Client " + client.id + " is being stopped");
 				client.stop();
 			}
 		});

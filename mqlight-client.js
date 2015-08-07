@@ -35,9 +35,10 @@ app.post('/events', function(req, res) {
 			for (attr in props) {
 				res.set(attr, props[attr]);
 			};
-			res.send(data);
+			console.log("Setting HTTP response " + data);
+			res.send(JSON.parse(data));
 			mqlight.stopClients(clients);
-		}
+        };
 		replyTopics.forEach(function(topic) {
 			var client = mqlight.listen(topic, callback)
 			clients.push(client);

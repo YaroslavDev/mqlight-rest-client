@@ -14,7 +14,6 @@ module.exports = {
 		return mockServiceFromJSON(mockRules);
 	},
 	mockServiceFromJSON: function(mockRules) {
-		console.log("MockRules is " + mockRules);
 		console.log("Mocking service according to rules: " + JSON.stringify(mockRules, null, 4));
 		return mockRules.rules.map(function(rule) {
 			var callback = function(data, delivery) {
