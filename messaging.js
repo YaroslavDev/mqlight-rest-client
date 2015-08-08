@@ -35,9 +35,13 @@ module.exports = {
 			counter += 1;
 			var options = {properties: attrs};
 			var client = mqlight.createClient(opts);
-			client.send(topic, body, options);
-			console.log("Client %s sent %s to topic %s", client.id, body, topic);
-			stopClients([client]);
+			client.send(topic, body, options, function(err, data) {
+				if (err) {
+					console.log("Client %s: Error occurred: %s", client.id, err);
+				}
+				console.log("Client %s sent %s to topic %s", client.id, body, topic);
+				stopClients([client]);
+			});
 			return {status: "Success: OK"};
 		} else {
 			return {status: "Failure: No messages were sent"};
