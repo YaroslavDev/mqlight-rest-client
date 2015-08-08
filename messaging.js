@@ -30,35 +30,27 @@ var counter = 0;
 module.exports = {
 	sendMessage: function(topic, body, attrs) {
 		if (topic != undefined) {
-			opts.id = "client" + counter;
+			opts.id = "mrc_client_" + counter;
 			counter += 1;
 			var options = {properties: attrs};
 			var client = mqlight.createClient(opts);
 			client.send(topic, body, options);
-			console.log("Sending " + body + " to topic " + topic);
-			console.log("Client " +  client.id + " is being stopped after sending message " + body);
-			client.stop();
+			console.log("Client %s sent %s to topic %s", client.id, body, topic);
+			stopClients([client]);
 			return {status: "Success: OK"};
 		} else {
 			return {status: "Failure: No messages were sent"};
 		}
 	},
+	stopClients: stopClients,
 	listen: function(topic, callback) {
-		opts.id = "client" + counter;
+		opts.id = "mrc_client_" + counter;
 		counter += 1;
 		var client = mqlight.createClient(opts);
 		client.subscribe(topic);
-		console.log("Client " + client.id + " is listening to " + topic);
 		client.on('message', callback);
+		console.log("Client %s is listening to %s", client.id, topic);
 		return client;
-	},
-	stopClients: function(clients) {
-		clients.forEach(function(client) {
-			if (client != undefined) {
-				console.log("Client " + client.id + " is being stopped");
-				client.stop();
-			}
-		});
 	},
 	addReplyTopic: function(replyTopics, topic) {
 		if (topic != undefined) replyTopics.push(topic);
@@ -71,3 +63,12 @@ module.exports = {
 		return attrs;
 	}
 };
+
+function stopClients(clients) {
+	clients.forEach(function(client) {
+		if (client != undefined) {
+			console.log("Client %s is being stopped", client.id);
+			client.stop();
+		}
+	});
+}

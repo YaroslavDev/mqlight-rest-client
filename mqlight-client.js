@@ -17,6 +17,7 @@ if (ruleFile != undefined) {
 }
 
 app.post('/events', function(req, res) {
+	console.log("Received %s request with body %j", req.originalUrl, req.body);
 	res.set('Content-Type', 'application/json');
 
 	var body = JSON.stringify(req.body);
@@ -35,8 +36,9 @@ app.post('/events', function(req, res) {
 			for (attr in props) {
 				res.set(attr, props[attr]);
 			};
-			console.log("Setting HTTP response " + data);
-			res.send(JSON.parse(data));
+			var response = JSON.parse(data)
+			console.log("Setting HTTP response %j", response);
+			res.send(response);
 			mqlight.stopClients(clients);
         };
 		replyTopics.forEach(function(topic) {
@@ -49,6 +51,7 @@ app.post('/events', function(req, res) {
 });
 
 app.post('/mock', function(req, res) {
+	console.log("Received %s request with body %j", req.originalUrl, req.body);
 	res.set('Content-Type', 'application/json');
 	mqlight.stopClients(mockerClients);
 	mockerClients = mocker.mockServiceFromJSON(req.body);
@@ -60,11 +63,11 @@ app.post('/mock', function(req, res) {
  */
 if (httpOpts.host) {
   http.createServer(app).listen(httpOpts.host, httpOpts.port, function () {
-    console.log('App listening on ' + httpOpts.host + ':' + httpOpts.port);
+    console.log('App listening on %s:%s', httpOpts.host, httpOpts.port);
   });
 }
 else {
   http.createServer(app).listen(httpOpts.port, function () {
-    console.log('App listening on *:' + httpOpts.port);
+    console.log('App listening on *:%s', httpOpts.port);
   });
 }
