@@ -1,4 +1,5 @@
 var mqlight = require('mqlight');
+var mqutils = require('./mqutils');
 
 console.log("Reading MQLight configuration...");
 
@@ -58,7 +59,9 @@ module.exports = {
 	readAttributes: function(headers) {
 		var attrs = {};
 		for (var header in headers) {
-			attrs[header] = headers[header];
+            if (!mqutils.isHTTPHeader(header.toLowerCase())) {
+                attrs[header] = headers[header];
+            }
 		}
 		return attrs;
 	}

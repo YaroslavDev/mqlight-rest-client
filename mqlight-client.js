@@ -36,13 +36,13 @@ app.post('/events', function(req, res) {
 			for (attr in props) {
 				res.set(attr, props[attr]);
 			};
-			var response = JSON.parse(data)
-			console.log("Setting HTTP response %j", response);
-			res.send(response);
+			var response = JSON.parse(data);
+			console.log("Setting HTTP response %s %j", typeof(response), response);
+			res.json(response);
 			mqlight.stopClients(clients);
         };
 		replyTopics.forEach(function(topic) {
-			var client = mqlight.listen(topic, callback)
+			var client = mqlight.listen(topic, callback);
 			clients.push(client);
 		});
 	} else {

@@ -9,13 +9,15 @@ module.exports = {
 		return mockServiceFromJSON(mockRules);
 	},
 	mockServiceFromJSON: mockServiceFromJSON
-}
+};
 
 function appendAttribute(topic, attrs, key) {
-	var attr = attrs[key];
-	if (attr != undefined) {
-		topic += "/" + attr;
-	}
+    if (attrs) {
+        var attr = attrs[key];
+        if (attr != undefined) {
+            topic += "/" + attr;
+        }
+    }
 	return topic;
 }
 
