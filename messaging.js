@@ -38,8 +38,9 @@ module.exports = {
 			client.send(topic, body, options, function(err, data) {
 				if (err) {
 					console.log("Client %s: Error occurred: %s", client.id, err);
+				} else {
+					console.log("Client %s sent %s to topic %s", client.id, body, topic);
 				}
-				console.log("Client %s sent %s to topic %s", client.id, body, topic);
 				stopClients([client]);
 			});
 			return {status: "Success: OK"};
