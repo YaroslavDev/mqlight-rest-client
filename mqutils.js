@@ -2,7 +2,7 @@ var fs = require('fs');
 
 headers = fs.readFileSync('headers.txt').toString().split('\n');
 headers = headers.map(function(header) {
-    return header.toLowerCase();
+    return header.toLowerCase().replace('\r', '');
 });
 
 module.exports = {
