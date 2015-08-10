@@ -18,44 +18,48 @@ try {
 	service_password = 'password';
 }
 
-var opts = {
+var connectionConfig = {
 	service: service_url,
 	user: service_username,
 	password: service_password
 };
 
-console.log("MQLight connection config: " + JSON.stringify(opts));
+console.log("MQLight connection config: %s", JSON.stringify(connectionConfig, null, 4));
 
 var counter = 0;
 
 module.exports = {
-	sendMessage: function(topic, body, attrs) {
-		if (topic != undefined) {
-			opts.id = "mrc_client_" + counter;
-			counter += 1;
-			var options = {properties: attrs};
-			var client = mqlight.createClient(opts);
-			client.send(topic, body, options, function(err, data) {
+	sendMessage: function(topic, body, attrs, callback) {
+		connectionConfig.id = getClientName();
+		attrs.timestamp = new Date().toISOString();
+		var options = {
+			ttl: 604800000,
+			properties: attrs
+		};
+		createClient(connectionConfig, function(client) {
+			client.send(topic, body, options, function(err) {
 				if (err) {
-					console.log("Client %s: Error occurred: %s", client.id, err);
+					console.log("Client %s: Error while sending message: %s", client.id, err);
 				} else {
 					console.log("Client %s sent %s to topic %s", client.id, body, topic);
 				}
-				stopClients([client]);
+				if (callback) {
+					callback(err);
+				}
+				client.stop();
 			});
-			return {status: "Success: OK"};
-		} else {
-			return {status: "Failure: No messages were sent"};
-		}
+		});
 	},
 	stopClients: stopClients,
 	listen: function(topic, callback) {
-		opts.id = "mrc_client_" + counter;
-		counter += 1;
-		var client = mqlight.createClient(opts);
-		client.subscribe(topic);
-		client.on('message', callback);
-		console.log("Client %s is listening to %s", client.id, topic);
+		connectionConfig.id = getClientName();
+		var client = createClient(connectionConfig, function(client) {
+			client.on('message', function(data, delivery) {
+				callback(data, delivery);
+			});
+			client.subscribe(topic);		
+			console.log("Client %s is listening to %s", client.id, topic);
+		});
 		return client;
 	},
 	addReplyTopic: function(replyTopics, topic) {
@@ -69,7 +73,8 @@ module.exports = {
             }
 		}
 		return attrs;
-	}
+	},
+	createClient: createClient
 };
 
 function stopClients(clients) {
@@ -77,6 +82,22 @@ function stopClients(clients) {
 		if (client != undefined) {
 			console.log("Client %s is being stopped", client.id);
 			client.stop();
+		}
+	});
+}
+
+function getClientName() {
+	var clientName = "mrc_client_" + counter;
+	counter += 1;
+	return clientName;
+}
+
+function createClient(callback) {
+	mqlight.createClient(connectionConfig, function(err, client) {
+		if (err) {
+			console.log("Error during client %s creation %s", client.id, err);
+		} else {
+			callback(client);
 		}
 	});
 }

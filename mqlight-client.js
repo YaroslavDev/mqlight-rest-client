@@ -22,31 +22,33 @@ app.post('/events', function(req, res) {
 
 	var body = JSON.stringify(req.body);
 	var topic = req.query.topic;
+	var replyTopic = req.query.reply;
 	var attrs = mqlight.readAttributes(req.headers);
-	var response = mqlight.sendMessage(topic, body, attrs);
 
-	var replyTopics = [];
-	mqlight.addReplyTopic(replyTopics, req.query.succeeded);
-	mqlight.addReplyTopic(replyTopics, req.query.failed);
+	var sendCallback = function(err) {
+		if (err) {
+			res.json(err);
+		} else if (replyTopic) {
+			var client = mqlight.listen(replyTopic, function(data, delivery) {
+				var props = delivery.message.properties;
+				console.log("Received amqp message with body %s and delivery %s", JSON.stringify(data, null, 4), JSON.stringify(delivery, null, 4))
+				for (attr in props) {
+					res.set(attr, props[attr]);
+				};
+				var response = JSON.parse(data);
+				console.log("Setting HTTP response %s %j", typeof(response), response);
+				client.stop();
+				res.json(response);
+	        });
+		} else {
+			res.json({status: "Success: OK"});
+		}
+	}
 
-	if (replyTopics.length != 0) {
-		var clients = [];
-		var callback = function(data, delivery) {
-			var props = delivery.message.properties;
-			for (attr in props) {
-				res.set(attr, props[attr]);
-			};
-			var response = JSON.parse(data);
-			console.log("Setting HTTP response %s %j", typeof(response), response);
-			res.json(response);
-			mqlight.stopClients(clients);
-        };
-		replyTopics.forEach(function(topic) {
-			var client = mqlight.listen(topic, callback);
-			clients.push(client);
-		});
+	if (topic) {
+		mqlight.sendMessage(topic, body, attrs, sendCallback);
 	} else {
-		res.send(response);
+		sendCallback(null);
 	}
 });
 
