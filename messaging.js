@@ -26,17 +26,14 @@ var connectionConfig = {
 
 console.log("MQLight connection config: %s", JSON.stringify(connectionConfig, null, 4));
 
-var counter = 0;
-
 module.exports = {
 	sendMessage: function(topic, body, attrs, callback) {
-		connectionConfig.id = getClientName();
 		attrs.timestamp = new Date().toISOString();
 		var options = {
 			ttl: 604800000,
 			properties: attrs
 		};
-		createClient(connectionConfig, function(client) {
+		createClient(function(client) {
 			client.send(topic, body, options, function(err) {
 				if (err) {
 					console.log("Client %s: Error while sending message: %s", client.id, err);
@@ -46,24 +43,16 @@ module.exports = {
 				if (callback) {
 					callback(err);
 				}
-				client.stop();
+				stopClient(client);
 			});
 		});
 	},
-	stopClients: stopClients,
-	listen: function(topic, callback) {
-		connectionConfig.id = getClientName();
-		var client = createClient(connectionConfig, function(client) {
-			client.on('message', function(data, delivery) {
-				callback(data, delivery);
-			});
-			client.subscribe(topic);		
-			console.log("Client %s is listening to %s", client.id, topic);
+	listen: listen,
+	listenOnce: function(topic, callback) {
+		var client = listen(topic, function(data, delivery) {
+			callback(data, delivery);
+			stopClient(client);
 		});
-		return client;
-	},
-	addReplyTopic: function(replyTopics, topic) {
-		if (topic != undefined) replyTopics.push(topic);
 	},
 	readAttributes: function(headers) {
 		var attrs = {};
@@ -74,30 +63,44 @@ module.exports = {
 		}
 		return attrs;
 	},
-	createClient: createClient
+	createClient: createClient,
+	stopClient: stopClient,
+	stopClients: stopClients
 };
 
-function stopClients(clients) {
-	clients.forEach(function(client) {
-		if (client != undefined) {
-			console.log("Client %s is being stopped", client.id);
-			client.stop();
-		}
+function listen(topic, callback) {
+	return createClient(function(client) {
+		client.on('message', callback);
+		client.subscribe(topic);		
+		console.log("Client %s is listening to %s", client.id, topic);
 	});
 }
 
-function getClientName() {
-	var clientName = "mrc_client_" + counter;
-	counter += 1;
-	return clientName;
+function stopClients(clients) {
+	clients.forEach(stopClient);
+}
+
+function stopClient(client) {
+	if (client != undefined) {
+		console.log("Client %s is being stopped", client.id);
+		client.stop();
+	}
 }
 
 function createClient(callback) {
-	mqlight.createClient(connectionConfig, function(err, client) {
+	connectionConfig.id = getClientName();
+	return mqlight.createClient(connectionConfig, function(err, client) {
 		if (err) {
 			console.log("Error during client %s creation %s", client.id, err);
 		} else {
 			callback(client);
 		}
 	});
+}
+
+var counter = 0;
+function getClientName() {
+	var clientName = "mrc_client_" + counter;
+	counter += 1;
+	return clientName;
 }

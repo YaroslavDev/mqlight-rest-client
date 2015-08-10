@@ -18,7 +18,6 @@ if (ruleFile != undefined) {
 
 app.post('/events', function(req, res) {
 	console.log("Received %s request with body %j", req.originalUrl, req.body);
-	res.set('Content-Type', 'application/json');
 
 	var body = JSON.stringify(req.body);
 	var topic = req.query.topic;
@@ -29,21 +28,18 @@ app.post('/events', function(req, res) {
 		if (err) {
 			res.json(err);
 		} else if (replyTopic) {
-			var client = mqlight.listen(replyTopic, function(data, delivery) {
+			mqlight.listenOnce(replyTopic, function(data, delivery) {
 				var props = delivery.message.properties;
 				console.log("Received amqp message with body %s and delivery %s", JSON.stringify(data, null, 4), JSON.stringify(delivery, null, 4))
-				for (attr in props) {
-					res.set(attr, props[attr]);
-				};
+                res.set(props);
 				var response = JSON.parse(data);
 				console.log("Setting HTTP response %s %j", typeof(response), response);
-				client.stop();
 				res.json(response);
 	        });
 		} else {
 			res.json({status: "Success: OK"});
 		}
-	}
+	};
 
 	if (topic) {
 		mqlight.sendMessage(topic, body, attrs, sendCallback);
@@ -54,10 +50,9 @@ app.post('/events', function(req, res) {
 
 app.post('/mock', function(req, res) {
 	console.log("Received %s request with body %j", req.originalUrl, req.body);
-	res.set('Content-Type', 'application/json');
 	mqlight.stopClients(mockerClients);
 	mockerClients = mocker.mockServiceFromJSON(req.body);
-	res.send({status: "Success: OK"});
+	res.json({status: "Success: OK"});
 });
 
 /*
