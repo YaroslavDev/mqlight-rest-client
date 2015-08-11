@@ -57,11 +57,21 @@ module.exports = {
 	readAttributes: function(headers) {
 		var attrs = {};
 		for (var header in headers) {
-            if (!mqutils.isHTTPHeader(header.toLowerCase())) {
-                attrs[header] = headers[header];
+            if (header.indexOf("attr_") != -1) {
+                attrs[header.replace("attr_", "")] = headers[header];
             }
 		}
 		return attrs;
+	},
+	readReplyTopics: function(queryParams) {
+		console.log(queryParams);
+		var replyTopics = [];
+		for (queryParam in queryParams) {
+			if (queryParam.indexOf("reply_") != -1) {
+				replyTopics.push(queryParams[queryParam]);
+			}
+		}
+		return replyTopics;
 	},
 	createClient: createClient,
 	stopClient: stopClient,
