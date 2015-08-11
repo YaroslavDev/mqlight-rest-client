@@ -1,4 +1,4 @@
-# Simple RESTful client to mq-light
+# Simple RESTful client for IBM MQ Light
 
 ## Installation
 
@@ -13,7 +13,7 @@ npm install
 node mqlight-client.js
 ```
 
-## Message Producer user guide
+## Message producer user guide
 
 Send a HTTP POST request to localhost:3000/events with following query params:
 
@@ -51,7 +51,7 @@ If you specify only sending topic, then client will publish a message and respon
 
 It is possible to specify only __reply_{topicId}__ topics. Then client will not publish any messages, and will start listening to specified topics. First response arrived to any of this topics, will be sent to user.
 
-## Message Consumer user guide
+## Message consumer user guide
 
 It is possible to mock service with some default behavior defined by set of rules. Below is sample of JSON containing such rules.
 
