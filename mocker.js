@@ -24,8 +24,7 @@ function appendAttribute(topic, attrs, key) {
 function mockServiceFromJSON(mockRules) {
 	console.log("MOCKER: Mocking service according to rules: %s", JSON.stringify(mockRules, null, 4));
 	return mockRules.rules.map(function(rule) {
-		return mqlight.listen(rule.on, function(data, delivery) {
-			var msg = JSON.parse(data);
+		return mqlight.listen(rule.on, function(msg, delivery) {
 			var attrs = delivery.message.properties;
 			console.log("MOCKER: Received msg %s", JSON.stringify(msg, null, 4));
 			console.log("MOCKER: Received msg with attrs %s", JSON.stringify(delivery, null, 4));
@@ -35,9 +34,7 @@ function mockServiceFromJSON(mockRules) {
 				sendTopic = appendAttribute(sendTopic, attrs, "provider");
 				var sendAttrs = mqlight.readAttributes(attrs);
 				console.log("MOCKER: Corresponding rule %j", rule.send);
-				var body = JSON.stringify(rule.send);
-				console.log("MOCKER: Responding with %s", body);
-				mqlight.sendMessage(sendTopic, body, sendAttrs);
+				mqlight.sendMessage(sendTopic, rule.send, sendAttrs);
 			} else {
 				console.log(data);
 				console.log(rule.recv);

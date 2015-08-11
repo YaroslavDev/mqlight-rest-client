@@ -17,22 +17,23 @@ if (ruleFile != undefined) {
 }
 
 app.post('/events', function(req, res) {
-	console.log("Received %s request with body %j", req.originalUrl, req.body);
+	console.log("Received %s request with headers %j and body %j", req.originalUrl, req.headers, req.body);
 
-	var body = JSON.stringify(req.body);
 	var topic = req.query.topic;
 	var replyTopic = req.query.reply;
-	var attrs = mqlight.readAttributes(req.headers);
+	var attrs = {};
+	if (req.body.attrs) {
+		attrs = req.body.attrs;
+	}
 
 	var sendCallback = function(err) {
 		if (err) {
 			res.json(err);
 		} else if (replyTopic) {
-			mqlight.listenOnce(replyTopic, function(data, delivery) {
+			mqlight.listenOnce(replyTopic, function(response, delivery) {
 				var props = delivery.message.properties;
-				console.log("Received amqp message with body %s and delivery %s", JSON.stringify(data, null, 4), JSON.stringify(delivery, null, 4))
+				console.log("Received amqp message with body %s and delivery %s", JSON.stringify(response, null, 4), JSON.stringify(delivery, null, 4))
                 res.set(props);
-				var response = JSON.parse(data);
 				console.log("Setting HTTP response %s %j", typeof(response), response);
 				res.json(response);
 	        });
@@ -42,7 +43,7 @@ app.post('/events', function(req, res) {
 	};
 
 	if (topic) {
-		mqlight.sendMessage(topic, body, attrs, sendCallback);
+		mqlight.sendMessage(topic, req.body.msg, attrs, sendCallback);
 	} else {
 		sendCallback(null);
 	}
