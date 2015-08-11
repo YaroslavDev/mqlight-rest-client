@@ -17,30 +17,30 @@ node mqlight-client.js
 
 Send a HTTP POST request to localhost:3000/events with following query params:
 
-* __topic__: Topic to which you would like to publish message;
-* __succeeded__: OPTIONAL. Topic to which sucessful response should be sent. If not set, responds immediately with {status: "OK"}. Otherwise, responds with message body received from this topic.
-* __failed__: OPTIONAL. Topic to which failed response should be sent;
+* __topic__: OPTIONAL. Topic to which you would like to publish message. If not set, starts listening or immediately returns;
+* __reply_{topicId}__: OPTIONAL. Topic to which response should be sent. If not set, responds immediately with {status: "OK"}. Otherwise, responds with message body received from this topic. You can specify as many reply topics as you want. First message that comes to any of these topics will be returned to user, remaining clients will be stopped.
 
 You can specify following headers:
 
-* __reply-id__: OPTIONAL. If specified, this request id will be appended to response topic of mocked service separated with '/'.
+* __x-vcap-request-id__: OPTIONAL. If specified, this request id will be appended to response topic of mocked service separated with '/'.
 * __provider__: OPTIONAL. If specified, this will be appended to response topic of mocked service separated with '/'.
 * When sending JSON in body specify header __Content-Type: application/json__.
-* All headers will be converted to AMQP message attributes.
+* Any header of form __attr_{attributeName}__ will be converted to AMQP message attribute with name __attributeName__ and same value.
 
 Request example:
 
 ```python
-> POST localhost:3000/events?topic=news/technology&succeeded=news/technology/responses&failed=news/technology/failures
+> POST localhost:3000/events?topic=news/technology&reply_1=news/technology/responses&reply_2=news/technology/failures
 > Headers:
 > Content-Type: application/json
+> attr_zipcode: 981823
 > Body:
 > { 
 > 	"message": "iPhone 6S release data" 
 > }
 ```
 
-This will publish a message with JSON contained in request body on topic _news/technology_ and subscribe to 2 topics: _news/technology/responses_ and _news/technology/failures_. First message that arrives on any of these 2 topics will be returned to user, and server will unsunscribe from both __succeeded__ and __failed__ topics.
+This will publish a message with attribute __zipcode__ equal to __981823__ and JSON contained in request body on topic _news/technology_ and subscribe to 2 topics: _news/technology/responses_ and _news/technology/failures_. First message that arrives on any of these 2 topics will be returned to user, and server will unsunscribe from both __reply_1__ and __reply_2__ topics.
 
 If you specify only sending topic, then client will publish a message and respond immediately with:
 ```json
@@ -49,7 +49,7 @@ If you specify only sending topic, then client will publish a message and respon
 }
 ```
 
-It is possible to specify only __succeeded__ or/and __failed__. Then client will not publish any messages, and will start listening to specified topics. First response arrived to any of this topics, will be sent to user.
+It is possible to specify only __reply_{topicId}__ topics. Then client will not publish any messages, and will start listening to specified topics. First response arrived to any of this topics, will be sent to user.
 
 ## Message Consumer user guide
 
@@ -116,7 +116,7 @@ This will read _manifest.yml_ that contains information necessary for deployment
 ---
 applications:
 - name: mqlight-rest-client
-  disk_quota: 1024M
+  disk_quota: 256M
   host: mqlight-rest-client
   path: .
   command: node mqlight-client.js

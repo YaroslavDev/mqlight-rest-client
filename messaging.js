@@ -1,5 +1,4 @@
 var mqlight = require('mqlight');
-var mqutils = require('./mqutils');
 
 console.log("Reading MQLight configuration...");
 
