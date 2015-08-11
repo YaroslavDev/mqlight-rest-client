@@ -38,7 +38,7 @@ module.exports = {
 				if (err) {
 					console.log("Client %s: Error while sending message: %s", client.id, err);
 				} else {
-					console.log("Client %s sent %s to topic %s", client.id, body, topic);
+					console.log("Client %s sent %j to topic %s", client.id, body, topic);
 				}
 				if (callback) {
 					callback(err);
