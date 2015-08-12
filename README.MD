@@ -8,7 +8,12 @@
 npm install
 ```
 * Indicate host, username and password to mqlight in _messaging.js_. Defaults are amqp://localhost, admin, password.
-* Having MQ Light turned on, run mqlight client:
+* Run MQ Light.
+* In order to check if everything is correctly setup and working run:
+```python
+npm test
+```
+* Having MQ Light turned on, run MQ Light client:
 ```python
 node mqlight-client.js
 ```

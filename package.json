@@ -16,7 +16,7 @@
 	},
 	"scripts": {
 		"start": "node mqlight-client.js",
-		"test": "mocha"
+		"test": "./node_modules/.bin/mocha"
 	},
 	"keywords": [
 		"mqlight",
