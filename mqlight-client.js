@@ -69,3 +69,5 @@ else {
     console.log('App listening on *:%s', httpOpts.port);
   });
 }
+
+exports.app = app;

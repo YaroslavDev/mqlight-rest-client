@@ -6,13 +6,17 @@
 		"express": ">=4.13.3",
 		"body-parser": ">=1.13.3",
 		"mqlight": ">=1.0.2015061000",
-		"underscore": ">=1.8.3"
+		"underscore": ">=1.8.3",
+		"mocha": ">=2.2.5",
+		"should": ">=7.0.3",
+		"supertest": ">=1.0.1"
 	},
 	"engines": {
 		"node": "~0.12.x"
 	},
 	"scripts": {
-		"start": "node mqlight-client.js"
+		"start": "node mqlight-client.js",
+		"test": "mocha"
 	},
 	"keywords": [
 		"mqlight",

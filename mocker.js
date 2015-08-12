@@ -8,7 +8,8 @@ module.exports = {
 		var mockRules = JSON.parse(data);
 		return mockServiceFromJSON(mockRules);
 	},
-	mockServiceFromJSON: mockServiceFromJSON
+	mockServiceFromJSON: mockServiceFromJSON,
+	appendAttribute: appendAttribute
 };
 
 function appendAttribute(topic, attrs, key) {

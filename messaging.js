@@ -102,6 +102,16 @@ function createClient(callback) {
 		if (err) {
 			console.log("Error during client %s creation %s", client.id, err);
 		} else {
+			client.stopped = false;
+			client.on('started', function() {
+				client.stopped = false;
+			})
+			client.on('restarted', function() {
+				client.stopped = false;
+			})
+			client.on('stopped', function() {
+				client.stopped = true;
+			})
 			callback(client);
 		}
 	});
