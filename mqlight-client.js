@@ -22,30 +22,32 @@ app.post('/events', function(req, res) {
 	var topic = req.query.topic;
 	var replyTopics = mqlight.readReplyTopics(req.query);
 	var attrs = mqlight.readAttributes(req.headers);
+	var isListening = replyTopics.length > 0;
 
-	var sendCallback = function(err) {
-		if (err) {
-			res.json(err);
-		} else if (replyTopics.length != 0) {
-			var clients = replyTopics.map(function(replyTopic) {
-				return mqlight.listen(replyTopic, function(response, delivery) {
-					var props = delivery.message.properties;
-					console.log("Received amqp message with body %s and delivery %s", JSON.stringify(response, null, 4), JSON.stringify(delivery, null, 4))
-	                res.set(props);
-					console.log("Setting HTTP response %s %j", typeof(response), response);
-					res.json(response);
-					mqlight.stopClients(clients);
-		        });
-			});
-		} else {
+	var clients = replyTopics.map(function(replyTopic) {
+		return mqlight.listen(replyTopic, function(response, delivery) {
+			var props = delivery.message.properties;
+			console.log("Received amqp message with body %s and delivery %s", JSON.stringify(response, null, 4), JSON.stringify(delivery, null, 4))
+            res.set(props);
+			console.log("Setting HTTP response %s %j", typeof(response), response);
+			res.json(response);
+			mqlight.stopClients(clients);
+        });
+	});
+	if (topic) {
+		mqlight.sendMessage(topic, req.body, attrs, function(err) {
+			if (!isListening) {
+				if (err) {
+					res.json(err);
+				} else {
+					res.json({status: "Success: OK"});
+				}
+			}
+		});
+	} else {
+		if (!isListening) {
 			res.json({status: "Success: OK"});
 		}
-	};
-
-	if (topic) {
-		mqlight.sendMessage(topic, req.body, attrs, sendCallback);
-	} else {
-		sendCallback(null);
 	}
 });
 

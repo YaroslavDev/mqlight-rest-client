@@ -26,9 +26,12 @@ describe('Messaging', function() {
 				JSON.stringify(response, null, 4).should.equal(JSON.stringify(msg, null, 4));
 				done();
 			});
-			messaging.sendMessage(topic, msg, attrs, function(err) {
-				if (err) throw err;
-			});
+
+			setTimeout(function() {
+				messaging.sendMessage(topic, msg, attrs, function(err) {
+					if (err) throw err;
+				});
+			}, 1000);
 		});
 	});
 });

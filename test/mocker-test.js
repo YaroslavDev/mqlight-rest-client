@@ -38,12 +38,16 @@ describe('Mocker', function() {
 				messaging.stopClients(clients);
 				done();
 			});
-			messaging.sendMessage(onTopic, receiveMsg, {}, function(err) {
-				if (err) throw err;
-			})
+			setTimeout(function() {
+				messaging.sendMessage(onTopic, receiveMsg, {}, function(err) {
+					if (err) throw err;
+				})
+			}, 1000);
 		})
+	})
 
-		it('should send message back when receiving message with x-vcap-request-id and provider on topic/{id}/{provider', function(done) {
+	describe('#mockServiceFromJSON()', function() {
+		it('should send message back when receiving message with x-vcap-request-id and provider on topic/{id}/{provider}', function(done) {
 			var receiveMsg = { "message": "How are you?" }
 			var onTopic = "chat/programmers/questions"
 			var sendMsg = { "message": "I am fine" }
@@ -66,9 +70,12 @@ describe('Mocker', function() {
 				messaging.stopClients(clients);
 				done();
 			});
-			messaging.sendMessage(onTopic, receiveMsg, {"x-vcap-request-id": "123", "provider": "ibm"}, function(err) {
-				if (err) throw err;
-			})
+
+			setTimeout(function() {
+				messaging.sendMessage(onTopic, receiveMsg, {"x-vcap-request-id": "123", "provider": "ibm"}, function(err) {
+					if (err) throw err;
+				})
+			}, 1000);
 		})
 	})
 })

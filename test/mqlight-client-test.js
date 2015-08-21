@@ -29,15 +29,17 @@ describe('MQ Light REST Client', function() {
 				done();
 			});
 
-			request(mqlightClient.app)
-				.post("/events?topic=chat")
-				.set('Content-Type', 'application/json')
-				.send(msg)
-				.expect(200)
-				.end(function(err, res) {
-					if (err) return done(err);
-					res.text.should.equal(JSON.stringify({status: "Success: OK"}))
-				});
+			setTimeout(function() {
+				request(mqlightClient.app)
+					.post("/events?topic=chat")
+					.set('Content-Type', 'application/json')
+					.send(msg)
+					.expect(200)
+					.end(function(err, res) {
+						if (err) return done(err);
+						res.text.should.equal(JSON.stringify({status: "Success: OK"}))
+					});
+			}, 1000);
 		})
 	})
 	describe('POST /events?topic=questions&reply_1=answers', function() {
@@ -58,19 +60,21 @@ describe('MQ Light REST Client', function() {
 			}
 			var clients = mocker.mockServiceFromJSON(rules)
 
-			request(mqlightClient.app)
-				.post("/events?topic=questions&reply_1=answers/123/ibm")
-				.set('Content-Type', 'application/json')
-				.set('attr_x-vcap-request-id', '123')
-				.set('attr_provider', 'ibm')
-				.send(receiveMsg)
-				.expect(200)
-				.end(function(err, res) {
-					if (err) return done(err);
-					res.text.should.equal(JSON.stringify(sendMsg))
-					messaging.stopClients(clients);
-					done();
-				});
+			setTimeout(function() {
+				request(mqlightClient.app)
+					.post("/events?topic=questions&reply_1=answers/123/ibm")
+					.set('Content-Type', 'application/json')
+					.set('attr_x-vcap-request-id', '123')
+					.set('attr_provider', 'ibm')
+					.send(receiveMsg)
+					.expect(200)
+					.end(function(err, res) {
+						if (err) return done(err);
+						res.text.should.equal(JSON.stringify(sendMsg))
+						messaging.stopClients(clients);
+						done();
+					});
+			}, 1000);
 		})
 	})
 });
